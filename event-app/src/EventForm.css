@@ -1,0 +1,258 @@
+
+/* =========================
+   Design Tokens / Theme
+   ========================= */
+:root {
+  --bg-1: #280120;
+  /* deep plum */
+  --bg-2: #450063;
+  /* deep purple */
+  --bg-3: #9414d1;
+  /* bright violet */
+  --bg-4: #03b2ed;
+  /* aqua blue */
+  --bg-5: #fd59ca;
+  /* vivid pink */
+
+  --surface: #ffffff;
+  /* card background stays white for clarity */
+  --ink-1: #280120;
+  /* strong text color */
+  --ink-2: #450063;
+  /* secondary text */
+  --muted: #9414d1;
+  /* hint/muted */
+
+  --ring: #03b2ed;
+  /* aqua blue for focus */
+  --accent: #fd59ca;
+  /* pink for accents */
+  --danger: #9414d1;
+  /* violet alert */
+
+  --shadow: 0 18px 50px rgba(40, 1, 32, 0.3);
+  --radius: 16px;
+  --radius-sm: 12px;
+}
+
+/* Reset-ish */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--ink-1);
+
+  /* Gradient background with palette */
+  background: linear-gradient(135deg,
+      var(--bg-1) 0%,
+      var(--bg-2) 20%,
+      var(--bg-3) 45%,
+      var(--bg-4) 70%,
+      var(--bg-5) 100%);
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease infinite;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Background animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Proper centering */
+.page {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
+
+/* Card */
+.card {
+  width: min(960px, 100%);
+  background: rgba(255, 255, 255, 0.9);
+  /* frosted effect */
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 2px solid var(--bg-3);
+  overflow: hidden;
+  margin: auto;
+  backdrop-filter: blur(12px);
+}
+
+.card__head {
+  padding: 28px 32px 16px 32px;
+  border-bottom: 2px solid var(--bg-4);
+  background: linear-gradient(120deg, var(--bg-2), var(--bg-3), var(--bg-5));
+  color: white;
+}
+
+.card__head h1 {
+  margin: 0 0 8px 0;
+  font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+  letter-spacing: 0.5px;
+}
+
+.card__head p {
+  margin: 0 0 16px 0;
+  color: #f0e9f7;
+}
+
+/* Form layout */
+.form {
+  padding: 24px 32px 32px 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 22px;
+}
+
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ink-1);
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--bg-4);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink-1);
+  font-size: 0.98rem;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--ring);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(3, 178, 237, 0.3);
+}
+
+.hint {
+  display: block;
+  color: var(--muted);
+  font-size: 0.83rem;
+  margin-top: 6px;
+}
+
+/* Dropzone */
+.dropzone {
+  position: relative;
+  border: 2px dashed var(--bg-3);
+  background: linear-gradient(180deg, rgba(3, 178, 237, 0.1), rgba(253, 89, 202, 0.1));
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.dropzone:hover {
+  transform: translateY(-1px);
+}
+
+.dropzone--active {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, rgba(253, 89, 202, 0.15), rgba(148, 20, 209, 0.1));
+}
+
+.dropzone__content {
+  font-size: 0.98rem;
+  color: var(--ink-2);
+}
+
+.dropzone .sub {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.dropzone .link {
+  color: var(--bg-3);
+  text-decoration: underline;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 18px;
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: white;
+  background: linear-gradient(135deg, var(--bg-5), var(--bg-3), var(--bg-4));
+  box-shadow: 0 10px 25px rgba(40, 1, 32, 0.35);
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
