@@ -1,0 +1,112 @@
+/* === Reports Grid === */
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+  padding: 10px;
+}
+
+/* === Individual Report Card === */
+.report-card {
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 14px;
+  padding: 20px 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.report-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  border-color: #a855f7; /* violet accent */
+}
+
+/* PDF Icon */
+.pdf-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 12px;
+}
+
+/* Event Title */
+.report-card span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+  display: block;
+  word-wrap: break-word;
+}
+
+/* Date Text */
+.report-card small {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* === PDF Viewer Overlay === */
+.pdf-viewer-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* === PDF Viewer Box === */
+.pdf-viewer {
+  background: #fff;
+  padding: 25px;
+  border-radius: 16px;
+  max-width: 850px;
+  width: 95%;
+  max-height: 90%;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: #f3f3f3;
+  color: #333;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 5px 10px;
+  transition: background 0.2s;
+}
+
+.close-btn:hover {
+  background: #ddd;
+}
+
+/* Download Button */
+.pdf-viewer .btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #9333ea, #3b82f6);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.pdf-viewer .btn:hover {
+  opacity: 0.85;
+}

@@ -1,19 +1,23 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"; 
+import { useParams } from "react-router-dom";
 import "./EventForm.css";
 
 export default function EventUploadForm() {
+  const { clubName } = useParams();
   const [form, setForm] = useState({
     eventName: "",
-    club: "",
+    club: clubName || "",
     description: "",
     date: "",
     strength: "",
     file: null,
   });
-
+  
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -42,91 +46,73 @@ export default function EventUploadForm() {
     onFileSelect(file);
   };
 
+  const submit = async (e) => {
+    e.preventDefault();
 
-const submit = async (e) => {
-  e.preventDefault();
+    if (
+      !form.eventName ||
+      !form.club ||
+      !form.description ||
+      !form.date ||
+      !form.strength ||
+      !form.file
+    ) {
+      alert("Please complete all fields and upload the feedback file.");
+      return;
+    }
 
-  if (
-    !form.eventName ||
-    !form.club ||
-    !form.description ||
-    !form.date ||
-    !form.strength ||
-    !form.file
-  ) {
-    alert("Please complete all fields and upload the feedback file.");
-    return;
-  }
+    try {
+      setLoading(true);
 
-  try {
-    setLoading(true);
+      const payload = new FormData();
+      payload.append("file", form.file);
+      payload.append("eventName", form.eventName);
+      payload.append("club", form.club);
+      payload.append("description", form.description);
+      payload.append("date", form.date);
+      payload.append("strength", form.strength);
 
-    const payload = new FormData();
-    payload.append("file", form.file);
-    payload.append("eventName", form.eventName);
-    payload.append("club", form.club);
-    payload.append("description", form.description);
-    payload.append("date", form.date);
-    payload.append("strength", form.strength);
+      const res = await fetch("http://127.0.0.1:8000/analyze/", {
+        method: "POST",
+        body: payload,
+      });
 
-    // Fetch PDF directly
-    const res = await fetch("http://127.0.0.1:8000/analyze/", {
-      method: "POST",
-      body: payload,
-    });
+      if (!res.ok) throw new Error("Upload failed");
 
-    if (!res.ok) throw new Error("Upload failed");
+      // Expecting backend to return JSON with pdfPath
+      const data = await res.json();
+      alert(`Feedback analyzed successfully. Report saved as ${data.pdfPath}`);
+    } catch (err) {
+      console.error("❌ Upload error:", err);
+      alert("Failed to upload file. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Convert response to blob (binary)
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "sentiment_summary.pdf"; // downloaded filename
-    a.click();
-    window.URL.revokeObjectURL(url);
-
-    alert("Feedback analyzed successfully. PDF downloaded.");
-
-  } catch (err) {
-    console.error("❌ Upload error:", err);
-    alert("Failed to upload file. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-// New download function
-const downloadPDF = async () => {
-  try {
-    const res = await fetch("http://127.0.0.1:8000/download-summary/");
-    if (!res.ok) throw new Error("PDF not found");
-
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "sentiment_summary.pdf";
-    a.click();
-    window.URL.revokeObjectURL(url);
-
-  } catch (err) {
-    console.error("❌ Download error:", err);
-    alert("PDF not available yet.");
-  }
-};
-
+  // Navigate to reports page for the entered club
+  const goToReports = () => {
+    if (!form.club) {
+      alert("Please enter/select a club name first.");
+      return;
+    }
+    navigate(`/reports/${form.club}`);
+  };
 
   return (
     <main className="page">
       <section className="card" role="region" aria-labelledby="form-title">
-        <header className="card__head">
-          <h1 id="form-title">Event Feedback Analyzer — Upload Portal</h1>
-          <p>
-            Enter event details and upload the collective feedback file to start
-            analysis.
-          </p>
+        <header className="card__head" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <h1 id="form-title">Event Feedback Analyzer — Upload Portal</h1>
+            <p>
+              Enter event details and upload the collective feedback file to start
+              analysis.
+            </p>
+          </div>
+          <button className="btn secondary" onClick={goToReports}>
+            📂 Past Reports
+          </button>
         </header>
 
         <form className="form" onSubmit={submit} noValidate>
@@ -198,7 +184,6 @@ const downloadPDF = async () => {
 
             <div className="field field--full">
               <label>Upload Feedback File</label>
-
               <div
                 className={`dropzone ${dragActive ? "dropzone--active" : ""}`}
                 onDragOver={onDragOver}
@@ -218,9 +203,7 @@ const downloadPDF = async () => {
                 />
                 <div className="dropzone__content">
                   Drag & drop feedback file here, or click to browse.
-                  <div className="sub">
-                    CSV, TXT, XLSX formats supported.
-                  </div>
+                  <div className="sub">CSV, TXT, XLSX formats supported.</div>
                 </div>
               </div>
 
@@ -252,7 +235,6 @@ const downloadPDF = async () => {
             >
               {loading ? "Analyzing..." : "Upload & Analyze"}
             </button>
-
           </footer>
         </form>
       </section>

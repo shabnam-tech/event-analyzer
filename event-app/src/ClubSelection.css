@@ -1,0 +1,42 @@
+
+.club-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* wider cards */
+  gap: 28px;  /* more space between cards */
+  width: 100%;
+  max-width: 1100px;  /* allow full row expansion */
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.club-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid var(--accent); /* thicker border */
+  border-radius: 16px;
+  padding: 32px 20px;  /* more padding */
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--ink-1);
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(40, 1, 32, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.club-card:hover {
+  transform: translateY(-6px);
+  border-color: #C06C84; /* pink border on hover */
+  box-shadow: 0 14px 28px rgba(40, 1, 32, 0.3);
+}
+
+.club-logo {
+  width: 80px;   /* bigger logos */
+  height: 80px;
+  margin: 0 auto 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
