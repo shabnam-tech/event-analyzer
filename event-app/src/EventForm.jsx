@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import "./EventForm.css";
 
+
 export default function EventUploadForm() {
   const { clubName } = useParams();
   const [form, setForm] = useState({
@@ -81,7 +82,27 @@ export default function EventUploadForm() {
 
       // Expecting backend to return JSON with pdfPath
       const data = await res.json();
-      alert(`Feedback analyzed successfully. Report saved as ${data.pdfPath}`);
+
+      if (data.success) {
+        // generate unique eventId (can use backend _id later)
+        const eventId = `${data.event}_${Date.now()}`;
+
+        // Navigate to analysis page with data
+        navigate(`/analysis/${eventId}`, { state: data });
+
+        // reset form
+        setForm({
+          eventName: "",
+          club: clubName || "",
+          description: "",
+          date: "",
+          strength: "",
+          file: null,
+        });
+      } else {
+        alert("Analysis failed: " + (data.error || "Unknown error"));
+      }
+
     } catch (err) {
       console.error("❌ Upload error:", err);
       alert("Failed to upload file. Please try again.");
@@ -185,28 +206,21 @@ export default function EventUploadForm() {
             <div className="field field--full">
               <label>Upload Feedback File</label>
               <div
-                className={`dropzone ${dragActive ? "dropzone--active" : ""}`}
-                onDragOver={onDragOver}
-                onDragLeave={onDragLeave}
-                onDrop={onDrop}
-                onClick={() => fileInputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                aria-label="Upload feedback file"
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  className="file-input"
-                  onChange={onFileInput}
-                  accept=".csv,.tsv,.txt,.xlsx,.xls"
-                />
-                <div className="dropzone__content">
-                  Drag & drop feedback file here, or click to browse.
-                  <div className="sub">CSV, TXT, XLSX formats supported.</div>
-                </div>
-              </div>
-
+  className={`dropzone ${dragActive ? "dropzone--active" : ""}`}
+  onClick={() => fileInputRef.current?.click()} // only here
+>
+  <input
+    ref={fileInputRef}
+    type="file"
+    className="file-input"
+    onChange={onFileInput}
+    accept=".csv,.tsv,.txt,.xlsx,.xls"
+  />
+  <div className="dropzone__content">
+    Drag & drop feedback file here, or click to browse.
+    <div className="sub">CSV, TXT, XLSX formats supported.</div>
+  </div>
+</div>
               {form.file && (
                 <div className="file-info" aria-live="polite">
                   <div className="file-name">{form.file.name}</div>

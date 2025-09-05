@@ -1,0 +1,225 @@
+/* =========================
+   Root Variables / Theme
+   ========================= */
+:root {
+  --bg-1: #280120;
+  --bg-2: #450063;
+  --bg-3: #9414d1;
+  --bg-4: #03b2ed;
+  --bg-5: #fd59ca;
+
+  --surface: #ffffff;
+  --ink-1: #280120;
+  --ink-2: #450063;
+  --muted: #9414d1;
+
+  --ring: #03b2ed;
+  --accent: #fd59ca;
+  --danger: #9414d1;
+
+  --shadow: 0 18px 50px rgba(40, 1, 32, 0.3);
+  --radius: 16px;
+  --radius-sm: 12px;
+}
+
+/* =========================
+   Body & Page
+   ========================= */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--ink-1);
+  background: linear-gradient(135deg,
+      var(--bg-1) 0%,
+      var(--bg-2) 20%,
+      var(--bg-3) 45%,
+      var(--bg-4) 70%,
+      var(--bg-5) 100%);
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.page {
+  min-height: 100dvh;
+  width: 100%;
+  padding: 32px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* =========================
+   Analysis Card
+   ========================= */
+.analysis-card {
+  width: min(1000px, 100%);
+  background: rgba(255, 255, 255, 0.85); /* slightly transparent */
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 2px solid var(--bg-3);
+  backdrop-filter: blur(12px);
+  margin: 20px auto;
+  padding: 20px;
+  overflow: hidden;
+}
+.analysis-page {
+  min-height: 100vh; /* or 100dvh */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  background: transparent; 
+}
+
+/* Header */
+.analysis-header {
+  padding: 28px 32px;
+  background: linear-gradient(120deg, var(--bg-2), var(--bg-3), var(--bg-5));
+  color: #fff;
+  text-align: center;
+  border-radius: var(--radius-sm);
+}
+.analysis-header h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+}
+.analysis-header p {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #f0e9f7;
+}
+
+/* Sections */
+.analysis-section {
+  padding: 24px 32px;
+  background: rgba(255, 255, 255, 0.9); /* card inside card */
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.analysis-section h2 {
+  margin: 0 0 12px;
+  font-size: 1.2rem;
+  color: var(--ink-2);
+}
+
+/* Sentiment Counts */
+.sentiment-counts {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.sentiment-box {
+  flex: 1;
+  min-width: 120px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--bg-5), var(--bg-3), var(--bg-4));
+  color: white;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column; /* stack children vertically */
+  justify-content: center;
+  align-items: center;
+}
+
+.sentiment-box .count {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 6px; /* space between count and label */
+}
+
+.sentiment-box .label {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  text-transform: capitalize;
+}
+
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+.chart-box img {
+  width: 100%;
+  max-height: 350px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+/* Keywords Split */
+.keywords-split {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.keywords-split div {
+  flex: 1;
+  min-width: 280px;
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+
+/* Lists & Feedback */
+.analysis-section ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  color: #2c3e50;
+  line-height: 1.6;
+}
+.analysis-section ul li {
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+/* Engagement Score */
+.analysis-section strong {
+  color: #27ae60;
+  font-size: 18px;
+}
+
+/* Download Button */
+.actions {
+  text-align: center;
+  margin-top: 10px;
+}
+.actions .btn, .download-link {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, var(--bg-5), var(--bg-3), var(--bg-4));
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+.actions .btn:hover, .download-link:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+/* Positive vs Negative Keywords */
+.keywords-split h3 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .keywords-split {
+    flex-direction: column;
+  }
+}

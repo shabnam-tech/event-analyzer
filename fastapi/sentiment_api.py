@@ -16,6 +16,12 @@ from textblob import TextBlob
 import nltk
 from pymongo import MongoClient
 from fastapi.encoders import jsonable_encoder
+from collections import Counter
+import base64
+from wordcloud import WordCloud
+from fastapi import Path, status
+
+
 
 # ===============================
 # Setup
@@ -153,7 +159,7 @@ async def analyze_excel(
                 summary_text += f"- {t}\n"
             summary_text += "\n"
 
-        # --- Chart (save to a safe temp file) ---
+        # --- Chart (save to temp file) ---
         plt.figure(figsize=(8, 5))
         bars = plt.barh(sentiment_order, sentiment_counts.values, color=["#4CAF50", "#FFC107", "#F44336"])
         plt.xlabel("Count")
@@ -174,7 +180,7 @@ async def analyze_excel(
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         pdf_filename = f"{safe_event}_{timestamp}.pdf"
         abs_pdf_path = os.path.join(club_dir, pdf_filename)
-        rel_pdf_path = f"{club}/{pdf_filename}"  # what React should use
+        rel_pdf_path = f"{club}/{pdf_filename}"
 
         pdf = FPDF()
         pdf.add_page()
@@ -191,14 +197,10 @@ async def analyze_excel(
         pdf.multi_cell(0, 6, summary_text)
 
         pdf.add_page()
-        max_width = pdf.w - 40  # keep margins
-        x_pos = (pdf.w - max_width) / 2
-        y_pos = 30
-        pdf.image(temp_chart_path, x=x_pos, y=y_pos, w=max_width)
-
+        max_width = pdf.w - 40
+        pdf.image(temp_chart_path, x=20, y=30, w=max_width)
         pdf.output(abs_pdf_path)
 
-        # Cleanup temp image
         try:
             if os.path.exists(temp_chart_path):
                 os.remove(temp_chart_path)
@@ -213,10 +215,74 @@ async def analyze_excel(
                 "description": description,
                 "date": date,
                 "strength": strength,
-                "pdf_path": rel_pdf_path,  # stored relative path
+                "pdf_path": rel_pdf_path,
                 "created_at": datetime.now(),
             }
         )
+
+        # ===============================
+        # EXTRA ANALYSIS for Dashboard
+        # ===============================
+
+        # Sentiment counts dictionary
+        sentiment_counts_dict = {
+            "Positive": int(sentiment_counts["Positive"]),
+            "Neutral": int(sentiment_counts["Neutral"]),
+            "Negative": int(sentiment_counts["Negative"]),
+        }
+
+        # --- PIE CHART ---
+        fig, ax = plt.subplots()
+        ax.pie(
+            [sentiment_counts_dict["Positive"],
+             sentiment_counts_dict["Negative"],
+             sentiment_counts_dict["Neutral"]],
+            labels=["Positive", "Negative", "Neutral"],
+            autopct="%1.1f%%"
+        )
+        pie_buf = BytesIO()
+        plt.savefig(pie_buf, format="png")
+        pie_buf.seek(0)
+        pie_base64 = base64.b64encode(pie_buf.read()).decode("utf-8")
+        plt.close(fig)
+
+        # --- WORD CLOUD ---
+        all_text = " ".join(df["text"].astype(str).tolist())
+        wc = WordCloud(width=800, height=400, background_color="white").generate(all_text)
+        wc_buf = BytesIO()
+        wc.to_image().save(wc_buf, format="PNG")
+        wc_buf.seek(0)
+        wc_base64 = base64.b64encode(wc_buf.read()).decode("utf-8")
+
+        # --- Trending Topics ---
+        words = [w.lower() for t in df["text"].astype(str) for w in re.findall(r"\w+", t)]
+        common_words = Counter(words).most_common(5)
+        trending_topics = [w for w, _ in common_words]
+
+        # --- Sample Feedback (first 5 entries) ---
+        sample_feedback = df["text"].astype(str).head(5).tolist()
+
+        # --- Engagement Score (simple formula: % of participants giving feedback) ---
+        try:
+            engagement_score = round((len(df) / int(strength)) * 100, 2)
+        except:
+            engagement_score = None
+
+        # --- Positive/Negative Keywords (WordCloud images) ---
+        positive_texts = " ".join(df[df["Sentiment"] == "Positive"]["text"])
+        negative_texts = " ".join(df[df["Sentiment"] == "Negative"]["text"])
+
+        def wc_to_base64(texts):
+            if not texts.strip():
+                return None
+            wc = WordCloud(width=400, height=200, background_color="white").generate(texts)
+            buf = BytesIO()
+            wc.to_image().save(buf, format="PNG")
+            buf.seek(0)
+            return base64.b64encode(buf.read()).decode("utf-8")
+
+        positive_keywords_img = wc_to_base64(positive_texts)
+        negative_keywords_img = wc_to_base64(negative_texts)
 
         # --- JSON response for React ---
         return {
@@ -224,15 +290,64 @@ async def analyze_excel(
             "pdfPath": rel_pdf_path,
             "event": eventName,
             "club": club,
+            "analysis": {
+                "sentimentCounts": sentiment_counts_dict,
+                "summary": summary_text,
+                "pieChart": pie_base64,
+                "wordCloud": wc_base64,
+                "trendingTopics": trending_topics,
+                "sampleFeedback": sample_feedback,
+                "engagementScore": engagement_score,
+                "positiveKeywords": positive_keywords_img,
+                "negativeKeywords": negative_keywords_img,
+            },
         }
 
     except HTTPException:
         raise
     except Exception as e:
-        # surface useful error to client
         return {"success": False, "error": str(e)}
+
 
 @app.get("/api/reports/{club}")
 def get_reports(club: str):
     reports = list(reports_collection.find({"club": club}, {"_id": 0}))
     return JSONResponse(content=jsonable_encoder(reports))
+
+@app.delete("/api/reports/{pdf_path:path}", status_code=status.HTTP_200_OK)
+def delete_report(pdf_path: str = Path(..., description="Relative path of the PDF to delete")):
+    """
+    Deletes a report PDF and its record from MongoDB.
+    `pdf_path` should be in format: club/report.pdf
+    """
+    try:
+        # Full absolute path to file
+        abs_path = os.path.join(reports_dir, pdf_path)
+
+        # Check if file exists
+        if not os.path.exists(abs_path):
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"success": False, "error": "File not found on server"}
+            )
+
+        # Delete the file from disk
+        os.remove(abs_path)
+
+        # Delete record from MongoDB
+        result = reports_collection.delete_one({"pdf_path": pdf_path})
+
+        if result.deleted_count == 0:
+            # File existed, but record not found
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"success": False, "error": "Record not found in database"}
+            )
+
+        return {"success": True, "message": "Report deleted successfully"}
+
+    except Exception as e:
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"success": False, "error": str(e)}
+        )

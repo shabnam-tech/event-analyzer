@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Document, Page, pdfjs } from "react-pdf";
 import "./ReportsPage.css";
-
-pdfjs.GlobalWorkerOptions.workerSrc = 
-  `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-
 
 
 export default function ReportsPage() {
@@ -14,22 +9,33 @@ export default function ReportsPage() {
   const [selectedReport, setSelectedReport] = useState(null);
   const [numPages, setNumPages] = useState(null);
 
+  // fetch reports
   useEffect(() => {
     fetch(`http://127.0.0.1:8000/api/reports/${clubName}`)
       .then((res) => res.json())
       .then((data) => {
-        // ✅ Remove duplicates by pdf_path
         const uniqueReports = data.filter(
           (r, index, self) =>
             index === self.findIndex((t) => t.pdf_path === r.pdf_path)
         );
         setReports(uniqueReports);
       })
-      .catch((err) => console.error("Error fetching reports:", err));
+      .catch(console.error);
   }, [clubName]);
 
-  const handleDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
+  const handleDocumentLoadSuccess = ({ numPages }) => setNumPages(numPages);
+
+  const handleDeleteReport = (pdfPath) => {
+    if (!window.confirm("Are you sure you want to delete this report?")) return;
+
+    fetch(`http://127.0.0.1:8000/api/reports/${pdfPath}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to delete");
+        setReports((prev) => prev.filter((r) => r.pdf_path !== pdfPath));
+      })
+      .catch(console.error);
   };
 
   return (
@@ -52,6 +58,15 @@ export default function ReportsPage() {
                 <img src="/pdf-icon.png" alt="PDF" className="pdf-icon" />
                 <span>{r.event}</span>
                 <small>{r.date}</small>
+                <button
+                  className="delete-btn"
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent opening PDF
+                    handleDeleteReport(r.pdf_path);
+                  }}
+                >
+                  🗑 Delete
+                </button>
               </div>
             ))}
           </div>
@@ -71,18 +86,12 @@ export default function ReportsPage() {
               ✖ Close
             </button>
 
-            <Document
-              file={`http://127.0.0.1:8000/reports/${selectedReport}`}
-              onLoadSuccess={handleDocumentLoadSuccess}
-            >
-              {Array.from(new Array(numPages), (el, index) => (
-                <Page
-                  key={`page_${index + 1}`}
-                  pageNumber={index + 1}
-                  width={600}
-                />
-              ))}
-            </Document>
+            <iframe
+              src={`http://127.0.0.1:8000/reports/${selectedReport}`}
+              width="100%"
+              height="600px"
+              style={{ border: "none" }}
+            ></iframe>
 
             <a
               href={`http://127.0.0.1:8000/reports/${selectedReport}`}

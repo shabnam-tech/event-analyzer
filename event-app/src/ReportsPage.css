@@ -9,6 +9,7 @@
 
 /* === Individual Report Card === */
 .report-card {
+    position: relative; 
   background: #fff;
   border: 1.5px solid #e0e0e0;
   border-radius: 14px;
@@ -25,6 +26,21 @@
   transform: translateY(-6px);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
   border-color: #a855f7; /* violet accent */
+}
+
+.delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  background: transparent;
+  color: #e74c3c;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  color: #c0392b;
 }
 
 /* PDF Icon */

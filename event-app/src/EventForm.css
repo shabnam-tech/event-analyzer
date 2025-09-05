@@ -61,10 +61,10 @@ body {
   background-size: 300% 300%;
   animation: gradientShift 12s ease infinite;
 
-  display: flex;
+/*  display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100vh;*/
 }
 
 /* Background animation */
