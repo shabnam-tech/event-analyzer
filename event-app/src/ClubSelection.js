@@ -9,7 +9,7 @@ export default function ClubSelection() {
   const navigate = useNavigate();
 
   const handleSelectClub = (club) => {
-    navigate(`/event-form/${encodeURIComponent(club)}`);
+      navigate(`/dashboard/${encodeURIComponent(club)}`);
   };
 
   return (

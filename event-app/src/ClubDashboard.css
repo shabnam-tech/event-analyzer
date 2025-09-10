@@ -1,0 +1,202 @@
+:root {
+  --bg-1: #280120;
+  --bg-2: #450063;
+  --bg-3: #9414d1;
+  --bg-4: #03b2ed;
+  --bg-5: #fd59ca;
+}
+
+/* =========================
+   Dashboard Page Only
+   ========================= */
+.dashboard-page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 100vh;
+
+  /* Gradient background for dashboard only */
+  background: linear-gradient(135deg,
+      var(--bg-1) 0%,
+      var(--bg-2) 20%,
+      var(--bg-3) 45%,
+      var(--bg-4) 70%,
+      var(--bg-5) 100%);
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease infinite;
+}
+
+/* Gradient animation keyframes */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Card */
+.dashboard-card {
+  width: 90%;
+  max-width: 1100px;
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Header */
+.dashboard-card header h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #222;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* Sections */
+.dashboard-section {
+  margin-bottom: 2.5rem;
+}
+
+.chart-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #fafafa;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Events Table ===== */
+.events table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.events th,
+.events td {
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.events th {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  font-weight: 600;
+}
+
+.events tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.events tr:hover {
+  background-color: #eef3ff;
+  transform: scale(1.01);
+  transition: 0.2s;
+}
+
+/* Feedbacks */
+.feedbacks {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.feedback-column {
+  flex: 1;
+  min-width: 250px;
+}
+
+.feedback-column h2 {
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+.feedback-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.feedback-column li {
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.feedback-column:first-child li {
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+}
+
+.feedback-column:last-child li {
+  background: linear-gradient(135deg, #ff4e50, #f9d423);
+  color: #222;
+}
+
+.feedback-column li:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-section.overall {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #444;
+  background: #f0f4ff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn.secondary {
+  background: linear-gradient(135deg, #555, #777);
+}
+
+.btn:hover {
+  opacity: 0.95;
+  transform: translateY(-3px);
+}
+
+/* Fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -121,7 +121,7 @@ export default function EventUploadForm() {
   };
 
   return (
-    <main className="page">
+    <main className="eventform-page">
       <section className="card" role="region" aria-labelledby="form-title">
         <header className="card__head" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>

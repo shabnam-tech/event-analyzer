@@ -9,7 +9,7 @@ export default function EventAnalysis() {
   if (!analysis) return <p className="no-data">No analysis data found.</p>;
 
   return (
-    <div className="analysis-page">
+    <main className="event-analysis-page">
       <div className="analysis-card">
         <header className="analysis-header">
           <h1>{event} — {club} Analysis</h1>
@@ -139,6 +139,6 @@ export default function EventAnalysis() {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

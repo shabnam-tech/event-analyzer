@@ -39,7 +39,7 @@ export default function ReportsPage() {
   };
 
   return (
-    <main className="page">
+    <main className="reports-page">
       <div className="card">
         <div className="card__head">
           <h1>{clubName} — Past Reports</h1>

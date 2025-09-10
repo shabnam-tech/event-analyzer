@@ -1,5 +1,10 @@
+/* === Reports Page Wrapper === */
+.reports-page {
+  padding: 20px;
+}
+
 /* === Reports Grid === */
-.report-grid {
+.reports-page .report-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 24px;
@@ -8,8 +13,8 @@
 }
 
 /* === Individual Report Card === */
-.report-card {
-    position: relative; 
+.reports-page .report-card {
+  position: relative; 
   background: #fff;
   border: 1.5px solid #e0e0e0;
   border-radius: 14px;
@@ -22,13 +27,13 @@
   align-items: center;
 }
 
-.report-card:hover {
+.reports-page .report-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
   border-color: #a855f7; /* violet accent */
 }
 
-.delete-btn {
+.reports-page .delete-btn {
   position: absolute;
   top: 6px;
   right: 6px;
@@ -39,19 +44,19 @@
   cursor: pointer;
 }
 
-.delete-btn:hover {
+.reports-page .delete-btn:hover {
   color: #c0392b;
 }
 
 /* PDF Icon */
-.pdf-icon {
+.reports-page .pdf-icon {
   width: 64px;
   height: 64px;
   margin-bottom: 12px;
 }
 
 /* Event Title */
-.report-card span {
+.reports-page .report-card span {
   font-size: 1rem;
   font-weight: 600;
   color: #333;
@@ -61,13 +66,13 @@
 }
 
 /* Date Text */
-.report-card small {
+.reports-page .report-card small {
   font-size: 0.85rem;
   color: #777;
 }
 
 /* === PDF Viewer Overlay === */
-.pdf-viewer-overlay {
+.reports-page .pdf-viewer-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.75);
@@ -79,7 +84,7 @@
 }
 
 /* === PDF Viewer Box === */
-.pdf-viewer {
+.reports-page .pdf-viewer {
   background: #fff;
   padding: 25px;
   border-radius: 16px;
@@ -92,7 +97,7 @@
 }
 
 /* Close Button */
-.close-btn {
+.reports-page .close-btn {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -106,12 +111,12 @@
   transition: background 0.2s;
 }
 
-.close-btn:hover {
+.reports-page .close-btn:hover {
   background: #ddd;
 }
 
 /* Download Button */
-.pdf-viewer .btn {
+.reports-page .pdf-viewer .btn {
   display: inline-block;
   margin-top: 15px;
   padding: 10px 16px;
@@ -123,6 +128,6 @@
   transition: opacity 0.2s ease-in-out;
 }
 
-.pdf-viewer .btn:hover {
+.reports-page .pdf-viewer .btn:hover {
   opacity: 0.85;
 }
