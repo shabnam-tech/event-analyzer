@@ -207,6 +207,17 @@ async def analyze_excel(
         except Exception:
             pass
 
+        # Sentiment counts dictionary
+        sentiment_counts_dict = {
+            "Positive": int(sentiment_counts["Positive"]),
+            "Neutral": int(sentiment_counts["Neutral"]),
+            "Negative": int(sentiment_counts["Negative"]),
+        }
+
+        # Top feedback (3 each)
+        top_positive = df[df["Sentiment"] == "Positive"]["text"].head(3).tolist()
+        top_negative = df[df["Sentiment"] == "Negative"]["text"].head(3).tolist()
+
         # --- Save record in Mongo ---
         reports_collection.insert_one(
             {
@@ -217,6 +228,11 @@ async def analyze_excel(
                 "strength": strength,
                 "pdf_path": rel_pdf_path,
                 "created_at": datetime.now(),
+                "sentiment_counts": sentiment_counts_dict,
+                "top_feedback": {
+                    "Positive": top_positive,
+                    "Negative": top_negative,
+                },
             }
         )
 
@@ -335,8 +351,7 @@ def delete_report(pdf_path: str = Path(..., description="Relative path of the PD
         os.remove(abs_path)
 
         # Delete record from MongoDB
-        result = reports_collection.delete_one({"pdf_path": pdf_path})
-
+        result = reports_collection.delete_one({"pdf_path": {"$regex": f"^{re.escape(pdf_path)}$", "$options": "i"}})
         if result.deleted_count == 0:
             # File existed, but record not found
             return JSONResponse(
